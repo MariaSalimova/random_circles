@@ -1,42 +1,45 @@
-import random
 import sys
+from random import randint
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPainter, QColor
 from PyQt5 import uic
 
-SCREEN_SIZE = [600, 650]
+from ui import Ui_MainWindow
 
 
-class RandomYellowCircles(QtWidgets.QMainWindow):
+SCREEN_SIZE = (600, 650)
+
+
+class Example(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('UI.ui', self)
+        self.setupUi(self)
         self.resize(*SCREEN_SIZE)
-        self.flag = False
-        self.initUI()
+        self.initUi()
 
-    def initUI(self):
-        self.pushButton.clicked.connect(self.draw_random_yellow_circles)
+    def initUi(self):
+        self.flag = False
+        self.pushButton.clicked.connect(self.draw)
+
+    def draw(self):
         self.flag = True
         self.update()
-    def draw_random_yellow_circles(self):
-        if self.flag:
-            painter = QPainter(self)
-            painter.begin(self)
-            painter.setBrush(QColor(250, 255, 0))
-            x, y = random.randint(0, SCREEN_SIZE[0]),\
-                    random.randint(0, SCREEN_SIZE[0])
-            w = h = random.randint(10, 70)
 
-            painter.drawEllipse(x, y, w, h)
-            painter.end()
+    def paintEvent(self, event):
+        if self.flag:
+            qp = QPainter()
+            qp.begin(self)
+            qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))
+            x, y = randint(0, SCREEN_SIZE[0]), randint(0, SCREEN_SIZE[1])
+            w = h = randint(10, 70)
+            qp.drawEllipse(x, y, w, h)
+            qp.end()
             self.flag = False
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    sq = RandomYellowCircles()
-    sq.show()
+    ex = Example()
+    ex.show()
     sys.exit(app.exec())
-
